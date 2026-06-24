@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
 import Sidebar from "./components/layout/Sidebar"
 import BottomNav from "./components/layout/BottomNav"
 import Header from "./components/layout/Header"
+import Chatbot from "./components/ai/Chatbot"
 import Dashboard from "./pages/Dashboard"
 import Transactions from "./pages/Transactions"
 import Income from "./pages/Income"
@@ -33,6 +34,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </main>
       </div>
       <BottomNav />
+      <Chatbot />
     </div>
   )
 }

@@ -11,3 +11,4 @@ yfinance
 openai
 email-validator
 yfinance
+google-generativeai

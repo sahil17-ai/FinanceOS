@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import AnimatedPage from "@/components/layout/AnimatedPage"
-import { ArrowDownRight, ArrowUpRight, Trash2 } from "lucide-react"
+import { ArrowDownRight, ArrowUpRight, Trash2, Camera, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import api from "@/lib/api"
 import { useFinance } from "@/context/FinanceContext"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
@@ -30,6 +31,36 @@ export default function Transactions() {
   const [amount, setAmount] = useState("")
   const [cat, setCat] = useState("Food")
   const [type, setType] = useState("expense")
+  const [isScanning, setIsScanning] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsScanning(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const res = await api.post('/ai/scan', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const { amount: scannedAmt, category } = res.data;
+      if (scannedAmt) setAmount(scannedAmt.toString());
+      if (category && categories.includes(category)) setCat(category);
+      setDesc("Scanned Bill");
+      setType("expense");
+      setOpen(true);
+      toast.success("Receipt scanned successfully!");
+    } catch (err) {
+      toast.error("Failed to scan receipt");
+    } finally {
+      setIsScanning(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleSave = () => {
     const amt = Number(amount);
@@ -60,8 +91,14 @@ export default function Transactions() {
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-muted-foreground">Transactions</h1>
           <p className="text-muted-foreground mt-1">Manage your daily expenses and income</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
+        <div className="flex gap-2">
+          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleScan} />
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isScanning} className="shadow-sm">
+            {isScanning ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Camera className="h-4 w-4 mr-2" />}
+            Scan Bill
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
             <Button className="shadow-lg hover:shadow-xl">+ Add Transaction</Button>
           </DialogTrigger>
           <DialogContent>
@@ -94,6 +131,7 @@ export default function Transactions() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <Card className="shadow-lg">

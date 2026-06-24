@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'https://financeos-z0ky.onrender.com/api',
 });
 
 // Request interceptor to add the auth token header to every request

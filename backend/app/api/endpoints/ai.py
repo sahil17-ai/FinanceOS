@@ -4,7 +4,7 @@ from typing import List
 import google.generativeai as genai
 from app.core.config import settings
 from app.api.deps import get_current_user
-from app.schemas.user import User
+from app.models.user import User
 
 router = APIRouter()
 

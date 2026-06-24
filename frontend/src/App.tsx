@@ -12,6 +12,7 @@ import Goals from "./pages/Goals"
 import Analytics from "./pages/Analytics"
 import Calendar from "./pages/Calendar"
 import Settings from "./pages/Settings"
+import Reminders from "./pages/Reminders"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
 import { Toaster } from "@/components/ui/sonner"
@@ -63,6 +64,7 @@ function AnimatedRoutes() {
         <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
         <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+        <Route path="/reminders" element={<ProtectedRoute><Reminders /></ProtectedRoute>} />
       </Routes>
     </AnimatePresence>
   )

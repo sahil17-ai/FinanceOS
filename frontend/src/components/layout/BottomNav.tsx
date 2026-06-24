@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom"
-import { Home, List, PlusCircle, TrendingUp, User } from "lucide-react"
+import { Home, List, PlusCircle, TrendingUp, User, Bell } from "lucide-react"
 
 const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "Transactions", href: "/transactions", icon: List },
   { name: "Add", href: "/add", icon: PlusCircle },
   { name: "Investments", href: "/investments", icon: TrendingUp },
+  { name: "Reminders", href: "/reminders", icon: Bell },
   { name: "Profile", href: "/settings", icon: User },
 ]
 

@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import AnimatedPage from "@/components/layout/AnimatedPage"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
+import { ArrowRight, Download, Calculator } from "lucide-react"
 
 import { useState, useEffect } from "react"
 const investmentData = [
@@ -19,6 +21,42 @@ const portfolioData = [
   { name: 'Mutual Funds (SIP)', value: 1500 },
 ];
 const COLORS = ['#8b5cf6', '#3b82f6', '#10b981'];
+
+const CurrencyConverter = () => {
+  const [amount, setAmount] = useState<number>(1000);
+  const [rate, setRate] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch('https://open.er-api.com/v6/latest/INR')
+      .then(res => res.json())
+      .then(data => setRate(data.rates.USD))
+      .catch(() => setRate(0.012)); // Fallback rate
+  }, []);
+
+  return (
+    <Card className="shadow-lg hover:border-primary/50 transition-colors print:hidden">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><Calculator className="h-5 w-5 text-purple-500"/> Live Currency Converter</CardTitle>
+        <CardDescription>Convert your INR wealth to USD</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label className="text-xs text-muted-foreground mb-1 block">INR (₹)</label>
+            <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+          </div>
+          <ArrowRight className="h-5 w-5 text-muted-foreground mt-4" />
+          <div className="flex-1">
+            <label className="text-xs text-muted-foreground mb-1 block">USD ($)</label>
+            <div className="flex h-10 w-full rounded-md border border-input bg-secondary/50 px-3 py-2 items-center font-bold text-sm text-green-500">
+              ${rate ? (amount * rate).toFixed(2) : '...'}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function Analytics() {
   const [spendingData, setSpendingData] = useState<any[]>([])
@@ -61,11 +99,14 @@ export default function Analytics() {
 
   return (
     <AnimatedPage className="p-4 md:p-6 space-y-6">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 print:hidden">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-muted-foreground">Analytics</h1>
           <p className="text-muted-foreground mt-1">Deep dive into your financial data</p>
         </div>
+        <Button onClick={() => window.print()} className="shadow-lg hover:shadow-xl bg-purple-600 hover:bg-purple-500 text-white rounded-full">
+          <Download className="mr-2 h-4 w-4" /> Save PDF Report
+        </Button>
       </div>
 
       {/* Top Level Expense Summary */}
@@ -177,6 +218,9 @@ export default function Analytics() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Currency Converter */}
+        <CurrencyConverter />
       </div>
     </AnimatedPage>
   )

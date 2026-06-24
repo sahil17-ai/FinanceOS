@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import { Home, List, PlusCircle, TrendingUp, Users, Target, BarChart2, Calendar, Settings } from "lucide-react"
+import { Home, List, PlusCircle, TrendingUp, Users, Target, BarChart2, Calendar, Settings, Bell } from "lucide-react"
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -10,6 +10,7 @@ const navItems = [
   { name: "Goals", href: "/goals", icon: Target },
   { name: "Analytics", href: "/analytics", icon: BarChart2 },
   { name: "Calendar", href: "/calendar", icon: Calendar },
+  { name: "Reminders", href: "/reminders", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
 ]
 

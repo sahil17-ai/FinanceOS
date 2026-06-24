@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
+import api from '@/lib/api';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -12,21 +13,13 @@ export default function Signup() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Signup failed');
-      }
+      await api.post('/auth/signup', { email, password });
 
       toast.success('Account created successfully! Please log in.');
       navigate('/login');
     } catch (err: any) {
-      toast.error(err.message || 'Signup failed');
+      const msg = err.response?.data?.detail || err.message || 'Signup failed';
+      toast.error(msg);
     }
   };
 

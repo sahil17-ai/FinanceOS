@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
+import api from '@/lib/api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,22 +15,14 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await api.post('/auth/login', new URLSearchParams({ username: email, password }), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ username: email, password }),
       });
-
-      if (!response.ok) {
-        throw new Error('Invalid credentials');
-      }
-
-      const data = await response.json();
-      login(data.access_token);
+      login(response.data.access_token);
       toast.success('Successfully logged in!');
       navigate('/');
     } catch (err: any) {
-      toast.error(err.message || 'Login failed');
+      toast.error(err.response?.data?.detail || err.message || 'Login failed');
     }
   };
 

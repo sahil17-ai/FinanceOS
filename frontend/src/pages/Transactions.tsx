@@ -20,7 +20,7 @@ export default function Transactions() {
   useEffect(() => {
     localStorage.setItem('fin_transactions', JSON.stringify(transactions));
   }, [transactions]);
-  const [categories, setCategories] = useState(() => {
+  const [categories] = useState(() => {
     const saved = localStorage.getItem('fin_categories');
     return saved ? JSON.parse(saved) : ["Family", "Friend", "Emergency", "Travel", "Food", "Custom"]
   });
@@ -80,7 +80,7 @@ export default function Transactions() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Category</label>
                 <select value={cat} onChange={e => setCat(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map((c: string) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
@@ -102,7 +102,7 @@ export default function Transactions() {
           <div className="flex gap-2">
             <select className="flex h-9 w-[130px] rounded-md border border-input bg-background px-3 py-1 text-sm">
               <option>All Categories</option>
-              {categories.map(c => <option key={c}>{c}</option>)}
+              {categories.map((c: string) => <option key={c}>{c}</option>)}
             </select>
           </div>
         </CardHeader>

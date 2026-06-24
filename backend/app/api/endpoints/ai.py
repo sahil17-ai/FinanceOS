@@ -26,7 +26,7 @@ async def chat_with_ai(request: ChatRequest, current_user: User = Depends(get_cu
         raise HTTPException(status_code=500, detail="Gemini API key not configured")
     
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-flash-latest')
         # Convert history
         formatted_history = []
         for msg in request.history:
@@ -50,7 +50,7 @@ async def scan_receipt(file: UploadFile = File(...), current_user: User = Depend
         
     try:
         contents = await file.read()
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-flash-latest')
         
         prompt = "Analyze this receipt/bill image. Extract the total final amount, and categorize the spend into one of these: Family, Friend, Emergency, Travel, Food, Custom. Respond ONLY with a valid JSON object containing exactly two keys: 'amount' (a number, no currency symbols) and 'category' (a string). Do not include any other text."
         

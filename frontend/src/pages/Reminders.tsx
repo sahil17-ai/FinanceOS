@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import AnimatedPage from "@/components/layout/AnimatedPage"
 import { Bell, Calendar, ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { useState, useEffect } from "react"

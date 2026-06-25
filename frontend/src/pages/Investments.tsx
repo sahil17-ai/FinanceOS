@@ -5,13 +5,13 @@ import { TrendingUp, Wallet, Activity } from "lucide-react"
 import { toast } from "sonner"
 import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import axios from "axios"
+
 import api from "@/lib/api"
 
 interface Investment {
   id: number;
-  name: str;
-  type: str;
+  name: string;
+  type: string;
   invested_amount: number;
   current_value: number;
   units?: number;
@@ -30,7 +30,7 @@ export default function Investments() {
   const [amountInvested, setAmountInvested] = useState("")
   
   const [investments, setInvestments] = useState<Investment[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+
 
   const fetchInvestments = async () => {
     try {
@@ -59,8 +59,6 @@ export default function Investments() {
       })
     } catch (e) {
       toast.error("Failed to fetch investments")
-    } finally {
-      setIsLoading(false)
     }
   }
 

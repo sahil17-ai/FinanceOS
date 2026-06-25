@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+
 import AnimatedPage from "@/components/layout/AnimatedPage"
-import { ArrowDownRight, ArrowUpRight, AlertCircle, ShieldCheck, Wallet, TrendingUp, Sparkles } from "lucide-react"
+import { ShieldCheck, Wallet, TrendingUp, Sparkles } from "lucide-react"
 import { useFinance } from "@/context/FinanceContext"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, AreaChart, Area, XAxis, YAxis } from "recharts"
 
@@ -171,7 +171,7 @@ export default function Dashboard() {
                     dataKey="value"
                     stroke="none"
                   >
-                    {pieData.map((entry, index) => (
+                    {pieData.map((_entry, index) => (
                       <Cell key={`cell-${index}`} fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]} />
                     ))}
                   </Pie>

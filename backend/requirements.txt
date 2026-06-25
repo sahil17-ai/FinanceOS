@@ -12,3 +12,4 @@ openai
 email-validator
 yfinance
 google-generativeai
+psycopg2-binary

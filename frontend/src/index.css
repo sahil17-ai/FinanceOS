@@ -74,3 +74,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-lg;
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .rotate-x-2 {
+    transform: rotateX(2deg) scale(1.05);
+  }
+  .-rotate-x-2 {
+    transform: rotateX(-2deg) scale(1.05);
+  }
+  .rotate-y-2 {
+    transform: rotateY(2deg) scale(1.05);
+  }
+  .-rotate-y-2 {
+    transform: rotateY(-2deg) scale(1.05);
+  }
+}

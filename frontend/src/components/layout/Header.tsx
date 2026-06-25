@@ -1,8 +1,10 @@
-import { Bell, Search, LogOut } from "lucide-react"
+import { Bell, Search, LogOut, Sun, Moon } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
+import { useTheme } from "next-themes"
 
 export default function Header() {
   const { logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   
   return (
     <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 md:px-6 sticky top-0 z-40">
@@ -22,6 +24,12 @@ export default function Header() {
       </div>
 
       <div className="flex items-center space-x-4 ml-auto">
+        <button 
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="relative p-2 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </button>
         <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
           <Bell className="h-5 w-5" />
           <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive"></span>

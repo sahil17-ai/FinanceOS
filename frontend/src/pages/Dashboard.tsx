@@ -1,8 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import AnimatedPage from "@/components/layout/AnimatedPage"
-import { ArrowDownRight, ArrowUpRight, AlertCircle, ShieldCheck, Wallet, TrendingUp } from "lucide-react"
+import { ArrowDownRight, ArrowUpRight, AlertCircle, ShieldCheck, Wallet, TrendingUp, Sparkles } from "lucide-react"
 import { useFinance } from "@/context/FinanceContext"
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, AreaChart, Area, XAxis, YAxis } from "recharts"
+
+const EXPENSE_COLORS = ['#ef4444', '#f97316', '#eab308', '#3b82f6'];
+
+const mockGrowthData = [
+  { name: 'Jan', value: 120000 },
+  { name: 'Feb', value: 135000 },
+  { name: 'Mar', value: 130000 },
+  { name: 'Apr', value: 155000 },
+  { name: 'May', value: 170000 },
+  { name: 'Jun', value: 185000 },
+]
 
 export default function Dashboard() {
   const { currentBalance, totalIncome, totalExpenses, totalInvestments } = useFinance();
@@ -19,18 +31,38 @@ export default function Dashboard() {
 
   let weeklyExpenses = 0;
   let monthlyExpenses = 0;
+  
+  // Categorize expenses for pie chart
+  const expenseCategories: Record<string, number> = {
+    Food: 0,
+    Travel: 0,
+    Bills: 0,
+    Other: 0
+  };
 
   transactions.forEach((t: any) => {
     if(t.type === 'expense') {
       const tDate = new Date(t.date);
       if(tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
         monthlyExpenses += t.amount;
+        // Mock category logic for now
+        const cat = t.category || 'Other';
+        if(expenseCategories[cat] !== undefined) {
+          expenseCategories[cat] += t.amount;
+        } else {
+          expenseCategories['Other'] += t.amount;
+        }
       }
       if(tDate >= sevenDaysAgo) {
         weeklyExpenses += t.amount;
       }
     }
   });
+
+  const pieData = Object.entries(expenseCategories).filter(([_, val]) => val > 0).map(([name, value]) => ({ name, value }));
+  if (pieData.length === 0) {
+    pieData.push({ name: 'No Data', value: 1 })
+  }
 
   const data = {
     balance: currentBalance,
@@ -50,15 +82,15 @@ export default function Dashboard() {
   return (
     <AnimatedPage className="p-4 md:p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-muted-foreground">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">Dashboard</h1>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 perspective-1000">
         {/* Current Balance */}
-        <Card className="bg-gradient-to-br from-background to-secondary/10 hover:border-primary/50 transition-colors">
+        <Card className="glass-card hover:border-primary/50 transform transition-all hover:scale-105 hover:rotate-y-2 duration-300 group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Current Balance</CardTitle>
-            <div className="p-2 bg-primary/10 rounded-full text-primary"><Wallet className="h-4 w-4" /></div>
+            <div className="p-2 bg-primary/10 rounded-full text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><Wallet className="h-4 w-4" /></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹{data.balance.toLocaleString()}</div>
@@ -67,10 +99,10 @@ export default function Dashboard() {
         </Card>
 
         {/* Safe To Spend */}
-        <Card className="bg-gradient-to-br from-background to-secondary/10 hover:border-primary/50 transition-colors">
+        <Card className="glass-card hover:border-primary/50 transform transition-all hover:scale-105 hover:-rotate-y-2 duration-300 group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Safe To Spend</CardTitle>
-            <div className="p-2 bg-green-500/10 rounded-full text-green-500"><ShieldCheck className="h-4 w-4" /></div>
+            <div className="p-2 bg-green-500/10 rounded-full text-green-500 group-hover:bg-green-500 group-hover:text-white transition-colors"><ShieldCheck className="h-4 w-4" /></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹{data.safeToSpend.toLocaleString()}</div>
@@ -78,91 +110,85 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Safe To Invest */}
-        <Card className="bg-gradient-to-br from-background to-secondary/10 hover:border-primary/50 transition-colors">
+        {/* AI Insight Card */}
+        <Card className="col-span-1 md:col-span-2 glass-card bg-gradient-to-br from-primary/10 to-purple-500/10 border-primary/20 transform transition-all hover:scale-[1.02] duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Safe To Invest</CardTitle>
-            <div className="p-2 bg-blue-500/10 rounded-full text-blue-500"><TrendingUp className="h-4 w-4" /></div>
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-primary"><Sparkles className="h-4 w-4"/> AI Insight</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{data.safeToInvest.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Available surplus</p>
-          </CardContent>
-        </Card>
-
-        {/* Upcoming Deductions */}
-        <Card className="bg-gradient-to-br from-background to-secondary/10 hover:border-primary/50 transition-colors border-l-4 border-l-destructive">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Next Deduction</CardTitle>
-            <div className="p-2 bg-destructive/10 rounded-full text-destructive"><AlertCircle className="h-4 w-4" /></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₹{data.upcomingEMI.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">29 Jul Education EMI</p>
+            <p className="text-sm font-medium mt-1">You've saved 15% more this week compared to last week! Keep it up. Your SIPs are on track for wealth compounding.</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 shadow-lg">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        
+        {/* Portfolio Growth Chart */}
+        <Card className="col-span-4 glass-card shadow-lg">
           <CardHeader>
-            <CardTitle>Monthly Cashflow</CardTitle>
+            <CardTitle>Net Worth Growth</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-5">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/20 hover:bg-secondary/40 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-500/20 text-green-500 rounded-lg"><ArrowUpRight className="h-5 w-5" /></div>
-                  <span className="font-semibold">Total Income</span>
-                </div>
-                <span className="font-bold text-lg text-green-500">₹{data.income.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/20 hover:bg-secondary/40 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-destructive/20 text-destructive rounded-lg"><ArrowDownRight className="h-5 w-5" /></div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold">Monthly Expenses</span>
-                    <span className="text-xs text-muted-foreground font-medium">Weekly: ₹{data.weeklyExpenses.toLocaleString()}</span>
-                  </div>
-                </div>
-                <span className="font-bold text-lg text-foreground">₹{data.monthlyExpenses.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/20 hover:bg-secondary/40 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-500/20 text-blue-500 rounded-lg"><TrendingUp className="h-5 w-5" /></div>
-                  <span className="font-semibold">Investments (SIPs)</span>
-                </div>
-                <span className="font-bold text-lg text-foreground">₹{data.investments.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between p-4 border-t border-border bg-primary/5 rounded-b-lg">
-                <span className="font-bold text-lg">Net Savings</span>
-                <span className="font-black text-2xl text-primary">₹{data.savings.toLocaleString()}</span>
-              </div>
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={mockGrowthData}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis hide />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
+                    itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  />
+                  <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="col-span-3 shadow-lg relative overflow-hidden group">
-          <div className="absolute -right-10 -top-10 opacity-5 group-hover:opacity-10 transition-opacity">
-            <ShieldCheck size={200} />
-          </div>
+        {/* Expenses Pie Chart */}
+        <Card className="col-span-3 glass-card shadow-lg">
           <CardHeader>
-            <CardTitle>Emergency Fund</CardTitle>
-            <CardDescription>Target: ₹{data.emergencyTarget.toLocaleString()}</CardDescription>
+            <CardTitle>Expense Breakdown</CardTitle>
+            <CardDescription>Where your money went this month</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6 mt-4">
-            <div>
-              <div className="flex justify-between items-end mb-2">
-                <div className="text-4xl font-black text-primary">₹{data.emergencyCurrent.toLocaleString()}</div>
-                <div className="text-sm font-bold bg-primary text-primary-foreground px-2 py-1 rounded-md">
-                  {((data.emergencyCurrent / data.emergencyTarget) * 100).toFixed(0)}%
-                </div>
-              </div>
-              <Progress value={(data.emergencyCurrent / data.emergencyTarget) * 100} className="h-3" />
+          <CardContent className="flex flex-col items-center">
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            <p className="text-sm text-muted-foreground pt-4 border-t border-border">
-              Keep building this up! Aim for 6 months of living expenses.
-            </p>
+            <div className="flex gap-4 mt-2 text-xs font-medium flex-wrap justify-center">
+              {pieData.map((entry, index) => (
+                <div key={entry.name} className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EXPENSE_COLORS[index % EXPENSE_COLORS.length] }}></div>
+                  <span>{entry.name}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -42,7 +42,7 @@ class Lending(LendingBase):
 class InvestmentBase(BaseModel):
     name: str # e.g. "SBI Multicap Fund Regular Growth", "GTL Infrastructure"
     type: str # 'sip' or 'stock'
-    amount_invested: float
+    invested_amount: float
     current_value: float = 0.0
     units: Optional[float] = None
     avg_price: Optional[float] = None

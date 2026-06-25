@@ -114,7 +114,16 @@ export default function Settings() {
             <CardDescription>Export your data or reset the application</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-4 flex-wrap">
+              <Button 
+                onClick={() => {
+                  window.print();
+                }} 
+                variant="outline"
+                className="w-full md:flex-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                Print / Download PDF Report
+              </Button>
               <Button 
                 onClick={() => {
                   const data = JSON.stringify(localStorage);
@@ -126,9 +135,9 @@ export default function Settings() {
                   a.click();
                   toast.success("Backup downloaded successfully!");
                 }} 
-                className="w-full md:w-1/2 bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full md:flex-1 bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Export All Data (Backup)
+                Export All Data
               </Button>
               <Button 
                 onClick={() => {
@@ -138,9 +147,9 @@ export default function Settings() {
                   }
                 }} 
                 variant="destructive" 
-                className="w-full md:w-1/2"
+                className="w-full md:flex-1"
               >
-                Factory Reset (Clear All Data)
+                Factory Reset
               </Button>
             </div>
           </CardContent>

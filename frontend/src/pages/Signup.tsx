@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -8,6 +9,7 @@ import api from '@/lib/api';
 export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -49,14 +51,23 @@ export default function Signup() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-200">Password</label>
-              <input 
-                type="password" 
-                value={password} 
-                onChange={e => setPassword(e.target.value)} 
-                className="flex h-12 w-full rounded-lg border border-white/20 bg-black/50 px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all placeholder:text-gray-500" 
-                placeholder="••••••••"
-                required 
-              />
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  className="flex h-12 w-full rounded-lg border border-white/20 bg-black/50 px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all placeholder:text-gray-500 pr-10" 
+                  placeholder="••••••••"
+                  required 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)} 
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="w-full h-12 text-lg font-bold shadow-lg shadow-purple-500/25 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 border-0 transition-all transform hover:scale-[1.02]">Sign Up</Button>
             <div className="text-center text-sm text-gray-400 mt-6">
